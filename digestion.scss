@@ -1,0 +1,93 @@
+$colors: (
+    primary: #007bff,
+    secondary: #6c757d,
+    success: #28a74e,
+    info: #17a2b8,
+    warning: #ffc107,
+    danger: #dc355f,
+    light: #f8f9fa,
+    dark: #2e2f3e
+);
+
+// $breakpoints: (
+//     sm: 576px,
+//     md: 768px,
+//     lg: 992px,
+//     xl: 1200px
+// );
+
+$breakpoints: (
+    sm: 0px,
+    md: 576px,
+    lg: 768px,
+);
+
+body {
+    margin: 0;
+    padding: 0;
+    color: #fff;
+    width: 100vw;
+    min-height: 100vh;
+    overflow-x: hidden;
+}
+
+.main {
+    $padd: 6px;
+    padding: $padd;
+    gap: $padd;
+    flex-direction: row;
+    display: flex;
+    align-items: center;
+    width: calc(100% - 2 * $padd);
+    height: calc(100vh - 2 * $padd);
+    justify-content: center;
+}
+
+@mixin block($size, $w, $h, $color, $nopad: 'false') {
+    $padd: 6px;
+    @if $size == sm {
+        $padd: 2px;
+        padding: $padd;
+        gap: $padd;
+    } @else if $size == md {
+        $padd: 4px;
+        padding: $padd;
+        gap: $padd;
+    } @else if $size == lg {
+        $padd: 6px;
+        padding: $padd;
+        gap: $padd;
+    }
+    @if $nopad == 'nopad' {
+        $padd: 0px;
+        padding: $padd;
+    }
+    flex-direction: column;
+    width: calc(($w * 10%) - 2 * $padd);
+    height: calc(($h * 10%) - 2 * $padd);
+    display: flex;
+    background-color: $color;
+    border-radius: 20px;
+    overflow-x: hidden;
+    overflow-y: auto;
+    transition: all 0.3s ease;
+}
+
+@each $breakpoint, $size in $breakpoints {
+    @media (min-width: $size) {
+        @each $name, $color in $colors {
+            @for $i from 1 through 10 {
+                @for $j from 1 through 10 {
+                    @each $nopad in ('false', 'nopad') {
+                        .block-#{$breakpoint}-#{$i}-#{$j}-#{$name}-#{$nopad} {
+                            @include block($breakpoint ,$i, $j, $color, $nopad);
+                        }
+                    }
+                    .block-#{$breakpoint}-#{$i}-#{$j}-#{$name} {
+                        @include block($breakpoint ,$i, $j, $color);
+                    }
+                }
+            }
+        }
+    }
+}
