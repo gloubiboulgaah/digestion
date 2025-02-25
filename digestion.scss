@@ -31,11 +31,22 @@ body {
     overflow-x: hidden;
 }
 
-.main {
+@mixin main($size, $direction: row) {
     $padd: 6px;
-    padding: $padd;
-    gap: $padd;
-    flex-direction: row;
+    @if $size == sm {
+        $padd: 2px;
+        padding: $padd;
+        gap: $padd;
+    } @else if $size == md {
+        $padd: 4px;
+        padding: $padd;
+        gap: $padd;
+    } @else if $size == lg {
+        $padd: 6px;
+        padding: $padd;
+        gap: $padd;
+    }
+    flex-direction: $direction;
     display: flex;
     align-items: center;
     width: calc(100% - 2 * $padd);
@@ -43,7 +54,7 @@ body {
     justify-content: center;
 }
 
-@mixin block($size, $w, $h, $color, $nopad: 'false') {
+@mixin block($size, $w, $h, $nopad: 'false', $direction: row) {
     $padd: 6px;
     @if $size == sm {
         $padd: 2px;
@@ -62,11 +73,10 @@ body {
         $padd: 0px;
         padding: $padd;
     }
-    flex-direction: column;
+    flex-direction: $direction;
     width: calc(($w * 10%) - 2 * $padd);
     height: calc(($h * 10%) - 2 * $padd);
     display: flex;
-    background-color: $color;
     border-radius: 20px;
     overflow-x: hidden;
     overflow-y: auto;
@@ -75,19 +85,33 @@ body {
 
 @each $breakpoint, $size in $breakpoints {
     @media (min-width: $size) {
-        @each $name, $color in $colors {
-            @for $i from 1 through 10 {
-                @for $j from 1 through 10 {
-                    @each $nopad in ('false', 'nopad') {
-                        .block-#{$breakpoint}-#{$i}-#{$j}-#{$name}-#{$nopad} {
-                            @include block($breakpoint ,$i, $j, $color, $nopad);
-                        }
-                    }
-                    .block-#{$breakpoint}-#{$i}-#{$j}-#{$name} {
-                        @include block($breakpoint ,$i, $j, $color);
-                    }
+        .main-#{$breakpoint}-column {
+            @include main($breakpoint, column);
+        }
+        .main-#{$breakpoint} {
+            @include main($breakpoint);
+        }
+        @for $i from 1 through 10 {
+            @for $j from 1 through 10 {
+                .block-#{$breakpoint}-#{$i}-#{$j}-nopad {
+                    @include block($breakpoint ,$i, $j, 'nopad');
+                }
+                .block-#{$breakpoint}-#{$i}-#{$j} {
+                    @include block($breakpoint ,$i, $j);
+                }
+                .block-#{$breakpoint}-#{$i}-#{$j}-nopad-column {
+                    @include block($breakpoint ,$i, $j, 'nopad', column);
+                }
+                .block-#{$breakpoint}-#{$i}-#{$j}-column {
+                    @include block($breakpoint ,$i, $j, 'false', column);
                 }
             }
         }
+    }
+}
+
+@each $name, $color in $colors {
+    .#{$name} {
+        background-color: $color;
     }
 }
